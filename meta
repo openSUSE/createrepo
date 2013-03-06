@@ -1,6 +1,7 @@
 Version: 1
-Previous: None
-Head: e9b91b29d9a4d098a5b5a3c7b3c52604c08e9732
+Previous: aa58483a8ab6b024756760026a41845b6662e141
+Head: 8968c9f43c2b419de2cea160207d1cc2dab65f21
 Applied:
+  createrepo-0.9.9-sort-packages-before-writing-repodata.patch: 8968c9f43c2b419de2cea160207d1cc2dab65f21
 Unapplied:
 Hidden:
