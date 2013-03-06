@@ -1,0 +1,42 @@
+Bottom: 10242fadb045b013bb0438c835e92316a32ce958
+Top:    6980993e0b51bd8ff85a720a8ea342123e5443e3
+Author: Duncan Mac-Vicar P <dmacvicar@suse.de>
+Date:   2013-03-06 16:46:41 +0100
+
+
+
+
+---
+
+diff --git a/createrepo/utils.py b/createrepo/utils.py
+index 6ea3731..6b1aca6 100644
+--- a/createrepo/utils.py
++++ b/createrepo/utils.py
+@@ -35,21 +35,14 @@ def _(args):
+ 
+ class GzipFile(gzip.GzipFile):
+     def _write_gzip_header(self):
++        # Generate a header that is easily reproduced with gzip -9 -n on
++        # an unix-like system
+         self.fileobj.write('\037\213')             # magic header
+         self.fileobj.write('\010')                 # compression method
+-        if hasattr(self, 'name'):
+-            fname = self.name[:-3]
+-        else:
+-            fname = self.filename[:-3]
+-        flags = 0
+-        if fname:
+-            flags = FNAME
+-        self.fileobj.write(chr(flags))
+-        write32u(self.fileobj, long(0))
+-        self.fileobj.write('\002')
+-        self.fileobj.write('\377')
+-        if fname:
+-            self.fileobj.write(fname + '\000')
++        self.fileobj.write('\000')                 # flags
++        write32u(self.fileobj, long(0))            # timestamp
++        self.fileobj.write('\002')                 # max compression
++        self.fileobj.write('\003')                 # UNIX
+ 
+ 
+ class LzmaFile:
