@@ -1,8 +1,8 @@
 Version: 1
-Previous: b583094192fae743ccaeb476bad311933ba89aaa
-Head: 12ea16d1a6c0e18cb7c530a63f14eef62cb8f7ab
+Previous: b73bc7bc25475ae28ee9d5095265f5dbdf1ba860
+Head: 8968c9f43c2b419de2cea160207d1cc2dab65f21
 Applied:
   createrepo-0.9.9-sort-packages-before-writing-repodata.patch: 8968c9f43c2b419de2cea160207d1cc2dab65f21
-  createrepo-0.9.9-disable-symlinks.patch: 12ea16d1a6c0e18cb7c530a63f14eef62cb8f7ab
 Unapplied:
+  createrepo-0.9.9-disable-symlinks.patch: 12ea16d1a6c0e18cb7c530a63f14eef62cb8f7ab
 Hidden:
