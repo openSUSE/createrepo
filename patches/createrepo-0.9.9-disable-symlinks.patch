@@ -1,0 +1,44 @@
+Bottom: 6980993e0b51bd8ff85a720a8ea342123e5443e3
+Top:    7e3c25127cb5ea476888d4750c171ba2e52164d5
+Author: Duncan Mac-Vicar P <dmacvicar@suse.de>
+Date:   2013-03-06 16:46:52 +0100
+
+
+
+
+---
+
+diff --git a/createrepo/__init__.py b/createrepo/__init__.py
+index 1d47e47..80f8c4c 100644
+--- a/createrepo/__init__.py
++++ b/createrepo/__init__.py
+@@ -85,6 +85,7 @@ class MetaDataConfig(object):
+         self.file_patterns = ['.*bin\/.*', '^\/etc\/.*', '^\/usr\/lib\/sendmail$']
+         self.dir_patterns = ['.*bin\/.*', '^\/etc\/.*']
+         self.skip_symlinks = False
++        self.skip_symlinked_dirs = False
+         self.pkglist = []
+         self.database_only = False
+         self.primaryfile = 'primary.xml.gz'
+@@ -281,6 +282,8 @@ class MetaDataGenerator:
+         func(arg, top, names)
+         for name in names:
+             name = os.path.join(top, name)
++            if self.conf.skip_symlinked_dirs and os.path.islink(name):
++                continue
+             if os.path.isdir(name):
+                 self._os_path_walk(name, func, arg)
+     def getFileList(self, directory, ext):
+diff --git a/genpkgmetadata.py b/genpkgmetadata.py
+index e18671e..281c94d 100755
+--- a/genpkgmetadata.py
++++ b/genpkgmetadata.py
+@@ -94,6 +94,8 @@ def parse_args(args, conf):
+         help="<dir> = optional directory to output to")
+     parser.add_option("-S", "--skip-symlinks", dest="skip_symlinks",
+         default=False, action="store_true", help="ignore symlinks of packages")
++    parser.add_option("--skip-symlinked-dirs", dest="skip_symlinked_dirs",
++        default=False, action="store_true", help="ignore symlinked directories")
+     parser.add_option("--changelog-limit", dest="changelog_limit",
+         default=None, help="only import the last N changelog entries")
+     parser.add_option("--unique-md-filenames", dest="unique_md_filenames",
