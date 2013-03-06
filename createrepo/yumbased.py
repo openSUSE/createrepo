@@ -60,8 +60,8 @@ class CreateRepoPackage(YumLocalPackage):
             t.append("".join(self.hdr[rpm.RPMTAG_SIGGPG]))
         if type(self.hdr[rpm.RPMTAG_SIGPGP]) is not types.NoneType:
             t.append("".join(self.hdr[rpm.RPMTAG_SIGPGP]))
-        if type(self.hdr[rpm.RPMTAG_HDRID]) is not types.NoneType:
-            t.append("".join(self.hdr[rpm.RPMTAG_HDRID]))
+        if type(self.hdr[rpm.RPMTAG_SHA1HEADER]) is not types.NoneType:
+            t.append("".join(self.hdr[rpm.RPMTAG_SHA1HEADER]))
 
         kcsum = misc.Checksums(checksums=[self.checksum_type])
         kcsum.update("".join(t))
