@@ -1,0 +1,22 @@
+Bottom: 4968c3363e56411ef336cdfdb67f27624761f7eb
+Top:    333883a368da5a73c693cb5fe2e6b60752c53c2f
+Author: Duncan Mac-Vicar P <dmacvicar@suse.de>
+Date:   2013-03-06 16:44:07 +0100
+
+
+
+
+---
+
+diff --git a/createrepo/yumbased.py b/createrepo/yumbased.py
+index ac06196..fa6a297 100644
+--- a/createrepo/yumbased.py
++++ b/createrepo/yumbased.py
+@@ -75,7 +75,7 @@ class CreateRepoPackage(YumLocalPackage):
+             csumo = open(csumfile, 'r')
+             checksum = csumo.readline()
+             csumo.close()
+-
++            os.path.os.utime(csumfile, None)
+         else:
+             checksum = misc.checksum(self.checksum_type, self.localpath)

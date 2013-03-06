@@ -1,6 +1,7 @@
 Version: 1
-Previous: c7ac74516aea69da93688365b2e1256cc919ffff
-Head: e9b91b29d9a4d098a5b5a3c7b3c52604c08e9732
+Previous: 6faa5ae8ba8a9fd3d3dee7b94299b2880d3dfb32
+Head: 1ce0124631654eea5d0223c2f50b2e694a3d82ac
 Applied:
+  createrepo-0.9.9-cache_utime.patch: 1ce0124631654eea5d0223c2f50b2e694a3d82ac
 Unapplied:
 Hidden:
