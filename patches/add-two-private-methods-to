@@ -1,0 +1,69 @@
+Bottom: 73b65962b080809da2f61197afb0ab099e01a553
+Top:    ea9e14be5b079ab8803fbc90426e30b20baa488c
+Author: Seth Vidal <skvidal@fedoraproject.org>
+Date:   2011-07-28 17:03:45 -0400
+
+add two private methods to help clean up doFinalMove() and makes the code a little
+nicer for how it is called from the cli.
+
+slightly nicer fix for: https://bugzilla.redhat.com/show_bug.cgi?id=581628
+
+
+---
+
+diff --git a/createrepo/__init__.py b/createrepo/__init__.py
+index 80f8c4c..61f6d66 100644
+--- a/createrepo/__init__.py
++++ b/createrepo/__init__.py
+@@ -1194,14 +1194,11 @@ class MetaDataGenerator:
+                     msg += _('Error was %s') % e
+                     raise MDError, msg
+ 
+-        try:
+-            os.rmdir(output_old_dir)
+-        except OSError, e:
+-            self.errorlog(_('Could not remove old metadata dir: %s')
+-                          % self.conf.olddir)
+-            self.errorlog(_('Error was %s') % e)
+-            self.errorlog(_('Please clean up this directory manually.'))
++        self._cleanup_tmp_repodata_dir()
++        self._write_out_read_pkgs_list()
++
+ 
++    def _write_out_read_pkgs_list(self):
+         # write out the read_pkgs_list file with self.read_pkgs
+         if self.conf.read_pkgs_list:
+             try:
+@@ -1214,6 +1211,20 @@ class MetaDataGenerator:
+                               % self.conf.read_pkgs_list)
+                 self.errorlog(_('Error was %s') % e)
+ 
++    def _cleanup_tmp_repodata_dir(self):
++        output_old_dir = os.path.join(self.conf.outputdir, self.conf.olddir)
++        output_temp_dir = os.path.join(self.conf.outputdir, self.conf.tempdir)
++        for dirbase in (self.conf.olddir, self.conf.tempdir):
++            dirpath = os.path.join(self.conf.outputdir, dirbase)
++            if os.path.exists(dirpath):
++                try:
++                    os.rmdir(dirpath)
++                except OSError, e:
++                    self.errorlog(_('Could not remove  temp metadata dir: %s')
++                                  % dirbase)
++                    self.errorlog(_('Error was %s') % e)
++                    self.errorlog(_('Please clean up this directory manually.'))
++        
+     def setup_sqlite_dbs(self, initdb=True):
+         """sets up the sqlite dbs w/table schemas and db_infos"""
+         destdir = os.path.join(self.conf.outputdir, self.conf.tempdir)
+diff --git a/genpkgmetadata.py b/genpkgmetadata.py
+index 281c94d..6fbdf67 100755
+--- a/genpkgmetadata.py
++++ b/genpkgmetadata.py
+@@ -244,6 +244,7 @@ def main(args):
+             if mdgen.checkTimeStamps():
+                 if mdgen.conf.verbose:
+                     print _('repo is up to date')
++                mdgen._cleanup_tmp_repodata_dir()
+                 sys.exit(0)
+ 
+         if conf.profile:
