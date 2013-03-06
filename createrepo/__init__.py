@@ -47,7 +47,7 @@ try:
 except ImportError:
     pass
 
-from utils import _gzipOpen, bzipFile, checkAndMakeDir, GzipFile, \
+from utils import _gzipOpen, bzipFile, checkAndMakeDir, GzipFile, HybridFile, \
                   checksum_and_rename, split_list_into_equal_chunks
 import deltarpms
 
@@ -413,7 +413,10 @@ class MetaDataGenerator:
         # setup the primary metadata file
         primaryfilepath = os.path.join(self.conf.outputdir, self.conf.tempdir,
                                        self.conf.primaryfile)
-        fo = _gzipOpen(primaryfilepath, 'w')
+        if self.conf.lzma:
+            fo = HybridFile(primaryfilepath, 'w')
+        else:
+            fo = GzipFile(primaryfilepath, 'w')
         fo.write('<?xml version="1.0" encoding="UTF-8"?>\n')
         fo.write('<metadata xmlns="http://linux.duke.edu/metadata/common"' \
             ' xmlns:suse="http://novell.com/package/metadata/suse/common"' \
@@ -951,18 +954,31 @@ class MetaDataGenerator:
                 dbversion = '9'
             #FIXME - in theory some sort of try/except  here
             rp = sqlitecachec.RepodataParserSqlite(repopath, repomd.repoid, None)
+        if self.conf.lzma:
+            workfiles.append((self.conf.primaryfile[:-3] + ".lzma", "primary_lzma"))
+
+        open_csums = {}
+        open_sizes = {}
 
         for (rpm_file, ftype) in workfiles:
             complete_path = os.path.join(repopath, rpm_file)
 
-            zfo = _gzipOpen(complete_path)
-            # This is misc.checksum() done locally so we can get the size too.
-            data = misc.Checksums([sumtype])
-            while data.read(zfo, 2**16):
-                pass
-            uncsum = data.hexdigest(sumtype)
-            unsize = len(data)
-            zfo.close()
+            if ftype.endswith("_lzma"):
+                # reuse the open-checksum computed for the .gz file
+                type = ftype[:-5]
+                uncsum = open_csums[type]
+                unsize = open_sizes[type]
+            else:
+                zfo = _gzipOpen(complete_path)
+                # This is misc.checksum() done locally so we can get the size too.
+                data = misc.Checksums([sumtype])
+                while data.read(zfo, 2**16):
+                    pass
+                uncsum = data.hexdigest(sumtype)
+                unsize = len(data)
+                zfo.close()
+                open_csums[ftype] = uncsum
+                open_sizes[ftype] = unsize
             csum = misc.checksum(sumtype, complete_path)
             timestamp = os.stat(complete_path)[8]
 
@@ -1048,7 +1064,7 @@ class MetaDataGenerator:
             data.openchecksum = (sumtype, uncsum)
 
             if self.conf.unique_md_filenames:
-                res_file = '%s-%s.xml.gz' % (csum, ftype)
+                res_file = '%s-%s' % (csum, rpm_file)
                 orig_file = os.path.join(repopath, rpm_file)
                 dest_file = os.path.join(repopath, res_file)
                 os.rename(orig_file, dest_file)

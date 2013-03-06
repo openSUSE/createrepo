@@ -72,6 +72,8 @@ def parse_args(args, conf):
     #parser.add_option("--database-only", default=False, action="store_true",
     #  dest='database_only',
     #  help="Only make the sqlite databases - does not work with --update, yet")
+    parser.add_option("--lzma", default=False, action="store_true",
+	help="create lzma-compressed metadata")
     parser.add_option("--update", default=False, action="store_true",
         help="use the existing repodata to speed up creation of new")
     parser.add_option("--update-md-path", default=None, dest='update_md_path',

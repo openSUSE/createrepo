@@ -21,6 +21,7 @@ import os.path
 import sys
 import bz2
 import gzip
+import subprocess
 from gzip import write32u, FNAME
 from yum import misc
 
@@ -49,6 +50,48 @@ class GzipFile(gzip.GzipFile):
         self.fileobj.write('\377')
         if fname:
             self.fileobj.write(fname + '\000')
+
+
+class LzmaFile:
+    def __init__(self, filename, mode, compresslevel=None):
+        if mode != "w" and mode != "wb":
+            raise NotImplementedError("Only writing of lzma files is supported")
+        self.file = open(filename, mode)
+        cmd = ["lzma"]
+        if compresslevel:
+                cmd.append("-%d" % compresslevel)
+        self.process = subprocess.Popen(cmd, stdin=subprocess.PIPE,
+                stdout=self.file)
+        return
+
+    def write(self, text):
+        self.process.stdin.write(text)
+        return
+
+    def close(self):
+        self.process.stdin.close()
+        self.file.close()
+        return
+
+class HybridFile:
+    def __init__(self, filename, mode):
+        if filename.endswith(".gz"):
+            filename = filename[:-3]
+        if filename.endswith(".lzma"):
+            filename = filename[:-5]
+        self.lzma = GzipFile(filename + ".gz", mode)
+        self.gz = LzmaFile(filename + ".lzma", mode)
+        return
+
+    def write(self, text):
+        self.gz.write(text)
+        self.lzma.write(text)
+        return
+
+    def close(self):
+        self.gz.close()
+        self.lzma.close()
+        return
 
 
 def _gzipOpen(filename, mode="rb", compresslevel=9):
