@@ -1,0 +1,158 @@
+Bottom: 794476fb59e8e06e9f2fcead42f19f0c3fa76192
+Top:    10242fadb045b013bb0438c835e92316a32ce958
+Author: Duncan Mac-Vicar P <dmacvicar@suse.de>
+Date:   2013-03-06 16:46:24 +0100
+
+
+
+
+---
+
+diff --git a/createrepo/__init__.py b/createrepo/__init__.py
+index 27d0280..1d47e47 100644
+--- a/createrepo/__init__.py
++++ b/createrepo/__init__.py
+@@ -47,7 +47,7 @@ try:
+ except ImportError:
+     pass
+ 
+-from utils import _gzipOpen, bzipFile, checkAndMakeDir, GzipFile, \
++from utils import _gzipOpen, bzipFile, checkAndMakeDir, GzipFile, HybridFile, \
+                   checksum_and_rename, split_list_into_equal_chunks
+ import deltarpms
+ 
+@@ -413,7 +413,10 @@ class MetaDataGenerator:
+         # setup the primary metadata file
+         primaryfilepath = os.path.join(self.conf.outputdir, self.conf.tempdir,
+                                        self.conf.primaryfile)
+-        fo = _gzipOpen(primaryfilepath, 'w')
++        if self.conf.lzma:
++            fo = HybridFile(primaryfilepath, 'w')
++        else:
++            fo = GzipFile(primaryfilepath, 'w')
+         fo.write('<?xml version="1.0" encoding="UTF-8"?>\n')
+         fo.write('<metadata xmlns="http://linux.duke.edu/metadata/common"' \
+             ' xmlns:suse="http://novell.com/package/metadata/suse/common"' \
+@@ -951,18 +954,31 @@ class MetaDataGenerator:
+                 dbversion = '9'
+             #FIXME - in theory some sort of try/except  here
+             rp = sqlitecachec.RepodataParserSqlite(repopath, repomd.repoid, None)
++        if self.conf.lzma:
++            workfiles.append((self.conf.primaryfile[:-3] + ".lzma", "primary_lzma"))
++
++        open_csums = {}
++        open_sizes = {}
+ 
+         for (rpm_file, ftype) in workfiles:
+             complete_path = os.path.join(repopath, rpm_file)
+ 
+-            zfo = _gzipOpen(complete_path)
+-            # This is misc.checksum() done locally so we can get the size too.
+-            data = misc.Checksums([sumtype])
+-            while data.read(zfo, 2**16):
+-                pass
+-            uncsum = data.hexdigest(sumtype)
+-            unsize = len(data)
+-            zfo.close()
++            if ftype.endswith("_lzma"):
++                # reuse the open-checksum computed for the .gz file
++                type = ftype[:-5]
++                uncsum = open_csums[type]
++                unsize = open_sizes[type]
++            else:
++                zfo = _gzipOpen(complete_path)
++                # This is misc.checksum() done locally so we can get the size too.
++                data = misc.Checksums([sumtype])
++                while data.read(zfo, 2**16):
++                    pass
++                uncsum = data.hexdigest(sumtype)
++                unsize = len(data)
++                zfo.close()
++                open_csums[ftype] = uncsum
++                open_sizes[ftype] = unsize
+             csum = misc.checksum(sumtype, complete_path)
+             timestamp = os.stat(complete_path)[8]
+ 
+@@ -1048,7 +1064,7 @@ class MetaDataGenerator:
+             data.openchecksum = (sumtype, uncsum)
+ 
+             if self.conf.unique_md_filenames:
+-                res_file = '%s-%s.xml.gz' % (csum, ftype)
++                res_file = '%s-%s' % (csum, rpm_file)
+                 orig_file = os.path.join(repopath, rpm_file)
+                 dest_file = os.path.join(repopath, res_file)
+                 os.rename(orig_file, dest_file)
+diff --git a/createrepo/utils.py b/createrepo/utils.py
+index 995c3b9..6ea3731 100644
+--- a/createrepo/utils.py
++++ b/createrepo/utils.py
+@@ -21,6 +21,7 @@ import os.path
+ import sys
+ import bz2
+ import gzip
++import subprocess
+ from gzip import write32u, FNAME
+ from yum import misc
+ 
+@@ -51,6 +52,48 @@ class GzipFile(gzip.GzipFile):
+             self.fileobj.write(fname + '\000')
+ 
+ 
++class LzmaFile:
++    def __init__(self, filename, mode, compresslevel=None):
++        if mode != "w" and mode != "wb":
++            raise NotImplementedError("Only writing of lzma files is supported")
++        self.file = open(filename, mode)
++        cmd = ["lzma"]
++        if compresslevel:
++                cmd.append("-%d" % compresslevel)
++        self.process = subprocess.Popen(cmd, stdin=subprocess.PIPE,
++                stdout=self.file)
++        return
++
++    def write(self, text):
++        self.process.stdin.write(text)
++        return
++
++    def close(self):
++        self.process.stdin.close()
++        self.file.close()
++        return
++
++class HybridFile:
++    def __init__(self, filename, mode):
++        if filename.endswith(".gz"):
++            filename = filename[:-3]
++        if filename.endswith(".lzma"):
++            filename = filename[:-5]
++        self.lzma = GzipFile(filename + ".gz", mode)
++        self.gz = LzmaFile(filename + ".lzma", mode)
++        return
++
++    def write(self, text):
++        self.gz.write(text)
++        self.lzma.write(text)
++        return
++
++    def close(self):
++        self.gz.close()
++        self.lzma.close()
++        return
++
++
+ def _gzipOpen(filename, mode="rb", compresslevel=9):
+     return GzipFile(filename, mode, compresslevel)
+ 
+diff --git a/genpkgmetadata.py b/genpkgmetadata.py
+index 8c98191..e18671e 100755
+--- a/genpkgmetadata.py
++++ b/genpkgmetadata.py
+@@ -72,6 +72,8 @@ def parse_args(args, conf):
+     #parser.add_option("--database-only", default=False, action="store_true",
+     #  dest='database_only',
+     #  help="Only make the sqlite databases - does not work with --update, yet")
++    parser.add_option("--lzma", default=False, action="store_true",
++	help="create lzma-compressed metadata")
+     parser.add_option("--update", default=False, action="store_true",
+         help="use the existing repodata to speed up creation of new")
+     parser.add_option("--update-md-path", default=None, dest='update_md_path',

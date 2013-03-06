@@ -1,10 +1,11 @@
 Version: 1
-Previous: a935387a476890809ccab846b3f9590923741af0
-Head: 974766699c97066a5aa990d57776c8e3837a0727
+Previous: 1978c7ba78342bf366838742cc9102bdda426958
+Head: dcb2c8b98c7ca95abe892d550520cbbc91513e71
 Applied:
   createrepo-0.9.9-cache_utime.patch: 1ce0124631654eea5d0223c2f50b2e694a3d82ac
   createrepo-0.9.9-cachefix.patch: 3305586fb99e77a0124ee719c237ede7e5c2370a
   createrepo-0.9.9-license-to-confirm.patch: f39e660ad3ca074d35c1bd820920149eda2bd4a9
   createrepo-0.9.9-sort-packages-before-writing-repodata.patch: 974766699c97066a5aa990d57776c8e3837a0727
+  createrepo-0.9.9-add-lzma-option-to-generate-primary.xml.lzma.patch: dcb2c8b98c7ca95abe892d550520cbbc91513e71
 Unapplied:
 Hidden:
