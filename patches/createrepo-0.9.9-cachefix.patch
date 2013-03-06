@@ -1,0 +1,25 @@
+Bottom: 333883a368da5a73c693cb5fe2e6b60752c53c2f
+Top:    58d805a3be2b0ee9ad92d21fac4e2a891c3309cf
+Author: Duncan Mac-Vicar P <dmacvicar@suse.de>
+Date:   2013-03-06 16:44:19 +0100
+
+
+
+
+---
+
+diff --git a/createrepo/yumbased.py b/createrepo/yumbased.py
+index fa6a297..6eb7d05 100644
+--- a/createrepo/yumbased.py
++++ b/createrepo/yumbased.py
+@@ -60,8 +60,8 @@ class CreateRepoPackage(YumLocalPackage):
+             t.append("".join(self.hdr[rpm.RPMTAG_SIGGPG]))
+         if type(self.hdr[rpm.RPMTAG_SIGPGP]) is not types.NoneType:
+             t.append("".join(self.hdr[rpm.RPMTAG_SIGPGP]))
+-        if type(self.hdr[rpm.RPMTAG_HDRID]) is not types.NoneType:
+-            t.append("".join(self.hdr[rpm.RPMTAG_HDRID]))
++        if type(self.hdr[rpm.RPMTAG_SHA1HEADER]) is not types.NoneType:
++            t.append("".join(self.hdr[rpm.RPMTAG_SHA1HEADER]))
+ 
+         kcsum = misc.Checksums(checksums=[self.checksum_type])
+         kcsum.update("".join(t))
