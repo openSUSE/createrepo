@@ -1,6 +1,6 @@
 Version: 1
-Previous: c629f118e5d5b12b5cd24c824167056f4c972e4f
-Head: a7a12227d00774cbdcc92db7170e871f7fc8dd7e
+Previous: bb15b1d90a03849500ce4bb7449d825c4d221829
+Head: fb66622075d5b454988303912d21af6406c530ca
 Applied:
   createrepo-0.9.9-cache_utime.patch: 1ce0124631654eea5d0223c2f50b2e694a3d82ac
   createrepo-0.9.9-cachefix.patch: 3305586fb99e77a0124ee719c237ede7e5c2370a
@@ -9,5 +9,6 @@ Applied:
   createrepo-0.9.9-add-lzma-option-to-generate-primary.xml.lzma.patch: dcb2c8b98c7ca95abe892d550520cbbc91513e71
   createrepo-0.9.9-generate-gzip-headers.patch: 178ec5cd60f774c100d6efb634b840b114576e1b
   createrepo-0.9.9-disable-symlinks.patch: a7a12227d00774cbdcc92db7170e871f7fc8dd7e
+  createrepo-0.9.8-workaround-umask-reset.patch: fb66622075d5b454988303912d21af6406c530ca
 Unapplied:
 Hidden:
