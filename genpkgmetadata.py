@@ -94,6 +94,8 @@ def parse_args(args, conf):
         help="<dir> = optional directory to output to")
     parser.add_option("-S", "--skip-symlinks", dest="skip_symlinks",
         default=False, action="store_true", help="ignore symlinks of packages")
+    parser.add_option("--skip-symlinked-dirs", dest="skip_symlinked_dirs",
+        default=False, action="store_true", help="ignore symlinked directories")
     parser.add_option("--changelog-limit", dest="changelog_limit",
         default=None, help="only import the last N changelog entries")
     parser.add_option("--unique-md-filenames", dest="unique_md_filenames",
