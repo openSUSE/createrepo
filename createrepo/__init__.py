@@ -24,6 +24,7 @@ from  bz2 import BZ2File
 from urlgrabber import grabber
 import tempfile
 import stat
+import re
 import fcntl
 import subprocess
 
@@ -504,6 +505,30 @@ class MetaDataGenerator:
                            " add it" % po
 
         return po
+ 
+    def sortPackages(self, pkglist):
+        class PackageKey:
+            def __init__(self, package):
+                m = re.search(r"([^/]+)-([^/-]+-[^/-]+)\.([^/.]+)\.rpm$",
+                        package)
+                if m:
+                    self.n = m.group(1)
+                    self.vr = m.group(2)
+                    self.a = m.group(3)
+                else:
+                    # give up on sorting
+                    self.n = package
+                    self.vr = 0
+                    self.a = 0
+            def __lt__(self, other):
+                if self.n != other.n:
+                    return self.n < other.n
+                if self.a != other.a:
+                    return self.a < other.a
+                return self.vr < other.vr
+
+        return sorted(pkglist, key=PackageKey)
+
 
     def writeMetadataDocs(self, pkglist=[], pkgpath=None):
 
@@ -514,6 +539,8 @@ class MetaDataGenerator:
             directory = self.conf.directory
         else:
             directory = pkgpath
+
+        pkglist = self.sortPackages(pkglist)
 
         # for worker/forked model
         # iterate the pkglist - see which ones are handled by --update and let them
