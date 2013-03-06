@@ -1194,14 +1194,19 @@ class MetaDataGenerator:
                     msg += _('Error was %s') % e
                     raise MDError, msg
 
-        try:
-            os.rmdir(output_old_dir)
-        except OSError, e:
-            self.errorlog(_('Could not remove old metadata dir: %s')
-                          % self.conf.olddir)
-            self.errorlog(_('Error was %s') % e)
-            self.errorlog(_('Please clean up this directory manually.'))
+        self._cleanup_tmp_repodata_dir()
+        self._cleanup_update_tmp_dir()        
+        self._write_out_read_pkgs_list()
 
+
+    def _cleanup_update_tmp_dir(self):
+        if not self.conf.update:
+            return
+        
+        shutil.rmtree(self.oldData._repo.basecachedir, ignore_errors=True)
+        shutil.rmtree(self.oldData._repo.base_persistdir, ignore_errors=True)
+        
+    def _write_out_read_pkgs_list(self):
         # write out the read_pkgs_list file with self.read_pkgs
         if self.conf.read_pkgs_list:
             try:
@@ -1214,6 +1219,20 @@ class MetaDataGenerator:
                               % self.conf.read_pkgs_list)
                 self.errorlog(_('Error was %s') % e)
 
+    def _cleanup_tmp_repodata_dir(self):
+        output_old_dir = os.path.join(self.conf.outputdir, self.conf.olddir)
+        output_temp_dir = os.path.join(self.conf.outputdir, self.conf.tempdir)
+        for dirbase in (self.conf.olddir, self.conf.tempdir):
+            dirpath = os.path.join(self.conf.outputdir, dirbase)
+            if os.path.exists(dirpath):
+                try:
+                    os.rmdir(dirpath)
+                except OSError, e:
+                    self.errorlog(_('Could not remove  temp metadata dir: %s')
+                                  % dirbase)
+                    self.errorlog(_('Error was %s') % e)
+                    self.errorlog(_('Please clean up this directory manually.'))
+        
     def setup_sqlite_dbs(self, initdb=True):
         """sets up the sqlite dbs w/table schemas and db_infos"""
         destdir = os.path.join(self.conf.outputdir, self.conf.tempdir)
