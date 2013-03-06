@@ -85,6 +85,7 @@ class MetaDataConfig(object):
         self.file_patterns = ['.*bin\/.*', '^\/etc\/.*', '^\/usr\/lib\/sendmail$']
         self.dir_patterns = ['.*bin\/.*', '^\/etc\/.*']
         self.skip_symlinks = False
+        self.skip_symlinked_dirs = False
         self.pkglist = []
         self.database_only = False
         self.primaryfile = 'primary.xml.gz'
@@ -281,6 +282,8 @@ class MetaDataGenerator:
         func(arg, top, names)
         for name in names:
             name = os.path.join(top, name)
+            if self.conf.skip_symlinked_dirs and os.path.islink(name):
+                continue
             if os.path.isdir(name):
                 self._os_path_walk(name, func, arg)
     def getFileList(self, directory, ext):
