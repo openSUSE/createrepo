@@ -415,6 +415,7 @@ class MetaDataGenerator:
         fo = _gzipOpen(primaryfilepath, 'w')
         fo.write('<?xml version="1.0" encoding="UTF-8"?>\n')
         fo.write('<metadata xmlns="http://linux.duke.edu/metadata/common"' \
+            ' xmlns:suse="http://novell.com/package/metadata/suse/common"' \
             ' xmlns:rpm="http://linux.duke.edu/metadata/rpm" packages="%s">' %
                        self.pkgcount)
         return fo
