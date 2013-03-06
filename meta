@@ -1,6 +1,6 @@
 Version: 1
-Previous: 39149240562ff01be6fdecec8e345f86559c2d30
-Head: ddd6cd359ff0676fa272cee5732b36d662020bdc
+Previous: 48e67091c6f0206705a52e8e3bb61f8370420973
+Head: 91ad8a0c7bb2ef8771c662585aa8e9d7ed7eba27
 Applied:
   createrepo-0.9.9-cache_utime.patch: 1ce0124631654eea5d0223c2f50b2e694a3d82ac
   createrepo-0.9.9-cachefix.patch: 3305586fb99e77a0124ee719c237ede7e5c2370a
@@ -11,5 +11,6 @@ Applied:
   createrepo-0.9.9-disable-symlinks.patch: a7a12227d00774cbdcc92db7170e871f7fc8dd7e
   createrepo-0.9.8-workaround-umask-reset.patch: fb66622075d5b454988303912d21af6406c530ca
   add-two-private-methods-to: ddd6cd359ff0676fa272cee5732b36d662020bdc
+  if-we-re-using-update-we-make: 91ad8a0c7bb2ef8771c662585aa8e9d7ed7eba27
 Unapplied:
 Hidden:
