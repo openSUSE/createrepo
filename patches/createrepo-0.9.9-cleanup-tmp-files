@@ -1,21 +1,24 @@
 Bottom: 73b65962b080809da2f61197afb0ab099e01a553
-Top:    ea9e14be5b079ab8803fbc90426e30b20baa488c
-Author: Seth Vidal <skvidal@fedoraproject.org>
-Date:   2011-07-28 17:03:45 -0400
+Top:    f2d1bcb7abcce3c91fb5eda092717c8e6676a00a
+Author: Duncan Mac-Vicar P <dmacvicar@suse.de>
+Date:   2013-03-06 17:13:32 +0100
 
 add two private methods to help clean up doFinalMove() and makes the code a little
 nicer for how it is called from the cli.
 
 slightly nicer fix for: https://bugzilla.redhat.com/show_bug.cgi?id=581628
 
+if we're using --update we make repo cache dirs in /var/tmp
+
+clean them up before we go
 
 ---
 
 diff --git a/createrepo/__init__.py b/createrepo/__init__.py
-index 80f8c4c..61f6d66 100644
+index 80f8c4c..f1894f5 100644
 --- a/createrepo/__init__.py
 +++ b/createrepo/__init__.py
-@@ -1194,14 +1194,11 @@ class MetaDataGenerator:
+@@ -1194,14 +1194,19 @@ class MetaDataGenerator:
                      msg += _('Error was %s') % e
                      raise MDError, msg
  
@@ -27,14 +30,22 @@ index 80f8c4c..61f6d66 100644
 -            self.errorlog(_('Error was %s') % e)
 -            self.errorlog(_('Please clean up this directory manually.'))
 +        self._cleanup_tmp_repodata_dir()
++        self._cleanup_update_tmp_dir()        
 +        self._write_out_read_pkgs_list()
 +
  
++    def _cleanup_update_tmp_dir(self):
++        if not self.conf.update:
++            return
++        
++        shutil.rmtree(self.oldData._repo.basecachedir, ignore_errors=True)
++        shutil.rmtree(self.oldData._repo.base_persistdir, ignore_errors=True)
++        
 +    def _write_out_read_pkgs_list(self):
          # write out the read_pkgs_list file with self.read_pkgs
          if self.conf.read_pkgs_list:
              try:
-@@ -1214,6 +1211,20 @@ class MetaDataGenerator:
+@@ -1214,6 +1219,20 @@ class MetaDataGenerator:
                                % self.conf.read_pkgs_list)
                  self.errorlog(_('Error was %s') % e)
  
