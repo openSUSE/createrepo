@@ -1,7 +1,6 @@
 Version: 1
-Previous: a1037bb385d3737f3df8f9fc90f81163b30916e1
+Previous: c7ac74516aea69da93688365b2e1256cc919ffff
 Head: e9b91b29d9a4d098a5b5a3c7b3c52604c08e9732
 Applied:
 Unapplied:
-  createrepo-0.9.9-disable-symlinks.patch: 12ea16d1a6c0e18cb7c530a63f14eef62cb8f7ab
 Hidden:
