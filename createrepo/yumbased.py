@@ -75,7 +75,7 @@ class CreateRepoPackage(YumLocalPackage):
             csumo = open(csumfile, 'r')
             checksum = csumo.readline()
             csumo.close()
-
+            os.path.os.utime(csumfile, None)
         else:
             checksum = misc.checksum(self.checksum_type, self.localpath)
 
