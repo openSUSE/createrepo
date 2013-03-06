@@ -1,8 +1,9 @@
 Version: 1
-Previous: e88464afa9acf123a66aacb1a819cc411940748f
-Head: 3305586fb99e77a0124ee719c237ede7e5c2370a
+Previous: 92ff3f497368ce769dfe799ba93158828f4189a1
+Head: f39e660ad3ca074d35c1bd820920149eda2bd4a9
 Applied:
   createrepo-0.9.9-cache_utime.patch: 1ce0124631654eea5d0223c2f50b2e694a3d82ac
   createrepo-0.9.9-cachefix.patch: 3305586fb99e77a0124ee719c237ede7e5c2370a
+  createrepo-0.9.9-license-to-confirm.patch: f39e660ad3ca074d35c1bd820920149eda2bd4a9
 Unapplied:
 Hidden:

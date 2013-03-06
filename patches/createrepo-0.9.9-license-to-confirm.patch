@@ -1,0 +1,22 @@
+Bottom: 58d805a3be2b0ee9ad92d21fac4e2a891c3309cf
+Top:    c5f8b8da0c807d337478a99f424b809d68c52563
+Author: Duncan Mac-Vicar P <dmacvicar@suse.de>
+Date:   2013-03-06 16:44:32 +0100
+
+
+
+
+---
+
+diff --git a/createrepo/__init__.py b/createrepo/__init__.py
+index 8f2538e..7c59702 100644
+--- a/createrepo/__init__.py
++++ b/createrepo/__init__.py
+@@ -415,6 +415,7 @@ class MetaDataGenerator:
+         fo = _gzipOpen(primaryfilepath, 'w')
+         fo.write('<?xml version="1.0" encoding="UTF-8"?>\n')
+         fo.write('<metadata xmlns="http://linux.duke.edu/metadata/common"' \
++            ' xmlns:suse="http://novell.com/package/metadata/suse/common"' \
+             ' xmlns:rpm="http://linux.duke.edu/metadata/rpm" packages="%s">' %
+                        self.pkgcount)
+         return fo
