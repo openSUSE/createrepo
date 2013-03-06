@@ -16,7 +16,9 @@
 
 
 import os
+u = os.umask(0)
 import rpm
+os.umask(u)
 import types
 
 from yum.packages import YumLocalPackage
