@@ -1,6 +1,6 @@
 Version: 1
-Previous: e08320178fd5550aa780c53e374c7078c9df5ae5
-Head: 2df5e015733dfb2fd3d286c4b5a9577054624287
+Previous: 1fe618f74f9fbe3e998c3daeb328faaee022e891
+Head: 5bf86eb39fdedccb714223c3f100eecb0137c1cc
 Applied:
   createrepo-0.9.9-cache_utime.patch: 1ce0124631654eea5d0223c2f50b2e694a3d82ac
   createrepo-0.9.9-cachefix.patch: 3305586fb99e77a0124ee719c237ede7e5c2370a
@@ -11,5 +11,6 @@ Applied:
   createrepo-0.9.9-disable-symlinks.patch: a7a12227d00774cbdcc92db7170e871f7fc8dd7e
   createrepo-0.9.8-workaround-umask-reset.patch: fb66622075d5b454988303912d21af6406c530ca
   createrepo-0.9.9-cleanup-tmp-files.patch: 2df5e015733dfb2fd3d286c4b5a9577054624287
+  update-fsf-address: 5bf86eb39fdedccb714223c3f100eecb0137c1cc
 Unapplied:
 Hidden:
