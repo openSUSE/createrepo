@@ -1,6 +1,6 @@
 Version: 1
-Previous: 9f2f388dfc91fc3a6a971812cfab4517a3fad968
-Head: 2289f765b399e1c35f931b7442c03a881949e73d
+Previous: d888e14d9996e58f9980e30392a92e211bfea09e
+Head: 7d2161f3f551382aa7427a24e18c8b7737b8a7be
 Applied:
   createrepo-0.9.9-cache_utime.patch: 1ce0124631654eea5d0223c2f50b2e694a3d82ac
   createrepo-0.9.9-cachefix.patch: 3305586fb99e77a0124ee719c237ede7e5c2370a
@@ -12,6 +12,5 @@ Applied:
   createrepo-0.9.8-workaround-umask-reset.patch: fb66622075d5b454988303912d21af6406c530ca
   createrepo-0.9.9-cleanup-tmp-files.patch: 2df5e015733dfb2fd3d286c4b5a9577054624287
   createrepo-0.9.9-update-fsf-address.patch: 7d2161f3f551382aa7427a24e18c8b7737b8a7be
-  refresh-temp: 2289f765b399e1c35f931b7442c03a881949e73d
 Unapplied:
 Hidden:
